@@ -1,0 +1,5 @@
+* Ability to load views from disk
+* Query these views from an object
+* Map the views to a hash structure, or just an array
+* At the top level retrieved, look for a RubyType field, and cast
+* vague AR methods (Create, save, hooks)
