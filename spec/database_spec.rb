@@ -84,5 +84,7 @@ describe Smeg2::Database do
     end
   end
 
-  it "should be able to get a view"
+  describe "Design Access" do
+    it "should be able to call a design with parameters"
+  end
 end

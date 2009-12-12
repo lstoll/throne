@@ -1,3 +1,5 @@
+require 'cgi'
+
 # Represents a connection to the database. Can be used standalone to talk
 # to a couch instance manually, otherwise is used by the mapper.
 class Smeg2::Database
@@ -60,8 +62,36 @@ class Smeg2::Database
     c.delete(@url + '/' + doc + '?rev=' + rev)
   end
 
+  # runs a design by path, with optional params passed in
+  def design(path, params = {}, &block)
+    url = @url + '/_design/' + path
+    res = JSON.parse(c.get(paramify_url(url, params)))
+    if block_given?
+      # TODO - stream properly
+      res.each do |i|
+        yield i
+      end
+      nil
+    else
+      res
+    end
+  end
+
+
 
   private
+
+  def paramify_url url, params = {}
+    if params && !params.empty?
+      query = params.collect do |k,v|
+        v = v.to_json if %w{key startkey endkey}.include?(k.to_s)
+        "#{k}=#{CGI.escape(v.to_s)}"
+      end.join("&")
+      url = "#{url}?#{query}"
+    end
+    url
+  end
+  
 
   def c; RestClient; end
 end
