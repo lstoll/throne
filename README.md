@@ -33,20 +33,27 @@ Delete a document
 
     @db.delete(document_id_or_document_object)
 
-Run a design document
+Run a design document/function
 
-    @db.design('DesignDoc/_view/viewname')
+    res = @db.function('_design/DesignDoc/_view/viewname')
+    res
     => An array of documents
+    res.offset
+    => couchdb offset data
 
     # with parameters
-    @db.design('DD/_list/listname/viewname', :key => ab..fg, :xyz => 7)
+    @db.function('_design/DD/_list/listname/viewname', :key => ab..fg, :xyz => 7)
     => An array of documents
 
     # Iterator Method
-    @db.design('DesignDoc/_view/viewname') do |doc|
+    @db.function('_design/DesignDoc/_view/viewname') do |doc|
       #invoked for each document
       p doc
     end
+
+    # All documents
+    @db.function('_all_docs')
+    => All docs in the database
 
 Delete the database
 

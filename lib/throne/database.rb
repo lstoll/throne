@@ -62,10 +62,11 @@ class Throne::Database
     c.delete(@url + '/' + doc + '?rev=' + rev)
   end
 
-  # runs a design by path, with optional params passed in
-  def design(path, params = {}, &block)
-    url = @url + '/_design/' + path
+  # runs a function by path, with optional params passed in
+  def function(path, params = {}, &block)
+    url = @url + '/' + path
     res = JSON.parse(c.get(paramify_url(url, params)))
+    res = Throne::ArrayWithFunctionMeta.new(res['rows'], res['offset'])
     if block_given?
       # TODO - stream properly
       res.each do |i|
@@ -76,8 +77,6 @@ class Throne::Database
       res
     end
   end
-
-
 
   private
 
@@ -96,7 +95,9 @@ class Throne::Database
   def c; RestClient; end
 end
 
+# Extended string, to store the couch revision
 class Throne::StringWithRevision < String
+  # Couch revision ID
   attr_reader :revision
 
   def initialize(id, rev)
@@ -104,3 +105,15 @@ class Throne::StringWithRevision < String
     super(id)
   end
 end
+
+# Extended array, to store the couch extra data
+class Throne::ArrayWithFunctionMeta < DelegateClass(Array)
+  # Offset field as returned by couch
+  attr_reader :offset
+  
+  def initialize(array, offset)
+    @offset = offset
+    super(array)
+  end
+end
+
