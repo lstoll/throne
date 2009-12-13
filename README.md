@@ -6,9 +6,9 @@ Simple library for working with CouchDB
 
 Create a database object to work with. Will create the DB if it doesn't exist
 
-  @db = Smeg2::Database.new('http://localhost:5984/smeg2-test')
-  # if you don't want to create the DB if it doesn't exist:
-  @db = Smeg2::Database.new('http://localhost:5984/smeg2-test', false)
+    @db = Smeg2::Database.new('http://localhost:5984/smeg2-test')
+    # if you don't want to create the DB if it doesn't exist:
+    @db = Smeg2::Database.new('http://localhost:5984/smeg2-test', false)
 
 Save a new document
 
