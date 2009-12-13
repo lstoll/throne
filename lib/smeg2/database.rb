@@ -33,21 +33,21 @@ class Smeg2::Database
   end
 
   # gets a document by it's ID
-  def get(docid)
-    JSON.parse(c.get(@url + '/' + docid))
+  def get(docid, rev=nil)
+    revurl = rev ? "?rev=#{rev}" : ""
+    JSON.parse(c.get(@url + '/' + docid + revurl))
   end
 
   # creates/updates a document from a hash/array structure
   def save(doc)
-    id = nil
     if id = doc['_id']
-      c.put(@url + '/' + id, doc.to_json)
+      res = c.put(@url + '/' + id, doc.to_json)
     else
       res = c.post(@url, doc.to_json)
-      res = JSON.parse(res)
-      id = res['id']
     end
-    id
+    res = JSON.parse(res) 
+    return nil unless res['ok']
+    Smeg2::StringWithRevision.new(res['id'], res['rev'])
   end
 
   # deletes a document. Can take an object or id
@@ -94,4 +94,13 @@ class Smeg2::Database
   
 
   def c; RestClient; end
+end
+
+class Smeg2::StringWithRevision < String
+  attr_reader :revision
+
+  def initialize(id, rev)
+    @revision = rev
+    super(id)
+  end
 end

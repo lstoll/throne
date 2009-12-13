@@ -46,9 +46,10 @@ describe Smeg2::Database do
       @db = Smeg2::Database.new(@dburl)
     end
 
-    it "should return a valid ID when creating" do
+    it "should return a valid ID and rev when creating" do
       id = @db.save(:testfield => 'true')
       id.should_not be_empty
+      id.revision.should_not be_empty
       lambda {RestClient.get(@dburl + '/' + id)}.
         should_not raise_error(Exception)
     end
@@ -58,6 +59,16 @@ describe Smeg2::Database do
       doc = @db.get(id)
       doc.should_not be_nil
       doc['testfield'].should_not be_nil
+    end
+
+    it "should be able to get a doc by it's ID and rev" do
+      id = @db.save(:testfield => 'true')
+      rev = id.revision
+      doc = @db.get(id)
+      doc['testfield2'] = 'bwah'
+      id = @db.save(doc)
+      doc = @db.get(id, rev)
+      doc['_rev'].should_not eql(id.revision)
     end
 
     it "should be able to update an existing doc" do
