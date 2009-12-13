@@ -1,13 +1,13 @@
 require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 
-describe Smeg2::Database do
+describe Throne::Database do
   before :all do
-    @dburl =  'http://localhost:5984/smeg2_test'
+    @dburl =  'http://localhost:5984/throne_test'
     begin
       RestClient.delete(@dburl)
     rescue
     end
-    @db = Smeg2::Database.new(@dburl)
+    @db = Throne::Database.new(@dburl)
     # some kind of fixtures loading?
   end
 
@@ -35,7 +35,7 @@ describe Smeg2::Database do
 
     it "shoudld automatically create the database" do
       @db.delete_database
-      @db = Smeg2::Database.new(@dburl)
+      @db = Throne::Database.new(@dburl)
       lambda {RestClient.get(@dburl)}.
         should_not raise_error(RestClient::ResourceNotFound)
     end
@@ -43,7 +43,7 @@ describe Smeg2::Database do
 
   describe "working with documents" do
     before :all do
-      @db = Smeg2::Database.new(@dburl)
+      @db = Throne::Database.new(@dburl)
     end
 
     it "should return a valid ID and rev when creating" do

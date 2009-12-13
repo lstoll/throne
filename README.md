@@ -1,4 +1,6 @@
-# smeg2
+# ♚ Throne
+
+The king is here - on his couch, covered in rubies.
 
 Simple library for working with CouchDB
 
@@ -6,15 +8,15 @@ Simple library for working with CouchDB
 
 Create a database object to work with. Will create the DB if it doesn't exist
 
-    @db = Smeg2::Database.new('http://localhost:5984/smeg2-test')
+    @db = Throne::Database.new('http://localhost:5984/throne-test')
     # if you don't want to create the DB if it doesn't exist:
-    @db = Smeg2::Database.new('http://localhost:5984/smeg2-test', false)
+    @db = Throne::Database.new('http://localhost:5984/throne-test', false)
 
 Save a new document
 
     id = @db.save({:document_title => 'New Document', :documents => 'are just a hash')
     id_of_document_saved = id
-    revision_of_document_saved = revision
+    revision_of_document_saved = id.revision
 
 Get a document
 
@@ -64,6 +66,6 @@ Create the database
   (if you want to have your own version, that is fine but bump version in a commit by itself I can ignore when I pull)
 * Send me a pull request. Bonus points for topic branches.
 
-== Copyright
+# Copyright
 
-Copyright (c) 2009 Lincoln Stoll. See LICENSE for details.
+Copyright (c) 2009 Lincoln Stoll, Ben Schwarz. See LICENSE for details.

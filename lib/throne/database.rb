@@ -2,7 +2,7 @@ require 'cgi'
 
 # Represents a connection to the database. Can be used standalone to talk
 # to a couch instance manually, otherwise is used by the mapper.
-class Smeg2::Database
+class Throne::Database
   attr_reader :url
 
   # Create a new instance, with the URL for the database to work with
@@ -47,7 +47,7 @@ class Smeg2::Database
     end
     res = JSON.parse(res) 
     return nil unless res['ok']
-    Smeg2::StringWithRevision.new(res['id'], res['rev'])
+    Throne::StringWithRevision.new(res['id'], res['rev'])
   end
 
   # deletes a document. Can take an object or id
@@ -96,7 +96,7 @@ class Smeg2::Database
   def c; RestClient; end
 end
 
-class Smeg2::StringWithRevision < String
+class Throne::StringWithRevision < String
   attr_reader :revision
 
   def initialize(id, rev)

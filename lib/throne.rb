@@ -6,8 +6,8 @@ $:.unshift File.dirname(__FILE__) unless
   $:.include?(File.dirname(__FILE__)) ||
   $:.include?(File.expand_path(File.dirname(__FILE__)))
 
-module Smeg2
-  autoload :Document, 'smeg2/document'
-  autoload :Tasks, 'smeg2/tasks'
-  autoload :Database, 'smeg2/database'
+module Throne
+  autoload :Document, 'throne/document'
+  autoload :Tasks, 'throne/tasks'
+  autoload :Database, 'throne/database'
 end

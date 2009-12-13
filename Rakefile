@@ -4,11 +4,11 @@ require 'rake'
 begin
   require 'jeweler'
   Jeweler::Tasks.new do |gem|
-    gem.name = "smeg2"
+    gem.name = "throne"
     gem.summary = %Q{Simple CouchDB library}
     gem.description = %Q{Simple library for working with CouchDB. Avoids magic, keeps it simple.}
     gem.email = "lstoll@lstoll.net"
-    gem.homepage = "http://github.com/lstoll/smeg2"
+    gem.homepage = "http://github.com/lstoll/throne"
     gem.authors = ["Lincoln Stoll"]
     gem.add_development_dependency "rspec", ">= 1.2.9"
     gem.add_dependency "rest-client", ">= 0"
@@ -42,7 +42,7 @@ Rake::RDocTask.new do |rdoc|
   version = File.exist?('VERSION') ? File.read('VERSION') : ""
 
   rdoc.rdoc_dir = 'rdoc'
-  rdoc.title = "smeg2 #{version}"
+  rdoc.title = "throne #{version}"
   rdoc.rdoc_files.include('README*')
   rdoc.rdoc_files.include('lib/**/*.rb')
 end
