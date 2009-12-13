@@ -5,8 +5,8 @@ begin
   require 'jeweler'
   Jeweler::Tasks.new do |gem|
     gem.name = "smeg2"
-    gem.summary = %Q{TODO: one-line summary of your gem}
-    gem.description = %Q{TODO: longer description of your gem}
+    gem.summary = %Q{Simple CouchDB library}
+    gem.description = %Q{Simple library for working with CouchDB. Avoids magic, keeps it simple.}
     gem.email = "lstoll@lstoll.net"
     gem.homepage = "http://github.com/lstoll/smeg2"
     gem.authors = ["Lincoln Stoll"]
