@@ -12,47 +12,47 @@ Create a database object to work with. Will create the DB if it doesn't exist
 
 Save a new document
 
-  id = @db.save({:document_title => 'New Document', :documents => 'are just a hash')
-  id_of_document_saved = id
-  revision_of_document_saved = revision
+    id = @db.save({:document_title => 'New Document', :documents => 'are just a hash')
+    id_of_document_saved = id
+    revision_of_document_saved = revision
 
 Get a document
 
-  doc = @db.get(document_id)
-  # with revision
-  doc = @db.get(document_id, revision)
+    doc = @db.get(document_id)
+    # with revision
+    doc = @db.get(document_id, revision)
 
 Save an existing document
 
-  id = @db.save(existing_document_loaded_from_db)
-  new_revision = id.revision
+    id = @db.save(existing_document_loaded_from_db)
+    new_revision = id.revision
 
 Delete a document
 
-  @db.delete(document_id_or_document_object)
+    @db.delete(document_id_or_document_object)
 
 Run a design document
 
-  @db.design('DesignDoc/_view/viewname')
-  => An array of documents
+    @db.design('DesignDoc/_view/viewname')
+    => An array of documents
 
-  # with parameters
-  @db.design('DD/_list/listname/viewname', :key => ab..fg, :xyz => 7)
-  => An array of documents
+    # with parameters
+    @db.design('DD/_list/listname/viewname', :key => ab..fg, :xyz => 7)
+    => An array of documents
 
-  # Iterator Method
-  @db.design('DesignDoc/_view/viewname') do |doc|
-    #invoked for each document
-    p doc
-  end
+    # Iterator Method
+    @db.design('DesignDoc/_view/viewname') do |doc|
+      #invoked for each document
+      p doc
+    end
 
 Delete the database
 
-  @db.delete_database
+    @db.delete_database
 
 Create the database
   
-  @db.create_database
+    @db.create_database
 
 ## Note on Patches/Pull Requests
  
