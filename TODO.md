@@ -2,3 +2,14 @@
 * At the top level retrieved, look for a RubyType field, and cast
 * vague AR methods (Create, save, hooks) 
 
+* Model Thoughts:
+  * Everything extends Dash.
+  * When a new Document is instantiated, it's RubyClass property is set to its class
+  * It's converted to JSON just by calling to_json on the parent 'document' class
+  * When it's parsed in, the overridden/delegated get method checks the type of the
+    parent object, and in instantiates it, passing the JSON hash in as a constuctor.
+  * The super constructor then loops the sub items, instantiating when it see's a 
+    RubyClass object, otherwise just setting the value.
+  * There should be a different parent class for Master documents and the sub items.
+    sub item's don't have save/get methods - only useful when loading from a view.
+
