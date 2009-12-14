@@ -19,7 +19,6 @@ rdoc
 pkg
 
 ## PROJECT::SPECIFIC
-throne.gemspec
 
 # Docs - these are generated
 .yardoc
