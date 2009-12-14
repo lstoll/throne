@@ -50,8 +50,16 @@ class Throne::Tasks
   # @param [String] base_path the path where design docs are stored
   def self.inject_design_doc_tasks(base_path)
     namespace :throne do
-      desc "Pushes all design docs into the named db url"
-      task :push_designs do
+      namespace :push_design do
+        dirs_in_path(base_path).each do |dir, fulldir|
+          desc "pushes designs for database #{dir}"
+          task dir.to_sym do
+            load_design_documents(url(dir), fulldir)
+          end
+        end
+
+        desc "push all designs"
+        task :all => dirs_in_path(base_path)
       end
     end
   end
@@ -106,8 +114,68 @@ class Throne::Tasks
     inject_database_tasks(base_path)
   end
 
-  # Injects rake tasks for loading and dumping data from databases.
-  # @param [String] base_path the path where design docs are stored
+  # Loads design documents into the database url, extracted from the source path
+  # The docs should be layed out in the following format:
+  # base_path/
+  # |-- <db name>
+  #      `-- <design doc name>
+  #          |-- lists
+  #          |   `-- statuses
+  #          |       `-- list.js
+  #          `-- views
+  #              `-- statuses
+  #                  |-- map.js
+  #                  `-- reduce.js 
+  # @param [String] db_url the url of the database to load the data in to
+  # @param [String] source_path the path to search for .yml and .json files
+  def self.load_design_documents(db_url, source_path)
+    # for each folder in base path, create a new design doc key
+    # create a lists key
+    # for each path in lists, add a key with the folder name
+    # inside this, there is a key called list, with the contents of the list function
+    # views is the same, except with a map and reduce function
+    Dir.glob(File.join(source_path, '*')).each do |doc_path|
+      doc_name = File.basename(doc_path)
+      doc = {'lists' => {}, 'views' => {}}
+      Dir.glob(File.join(doc_path, 'lists', '*')) do |list_path|
+        list_name = File.basename(list_path)
+        doc['lists'][list_name] = {}
+        listfn = File.join(list_path, 'list.js')
+        doc['lists'][list_name]['list'] = 
+            File.read(listfn) if File.exists?(listfn)
+      end
+      Dir.glob(File.join(doc_path, 'views', '*')) do |view_path|
+        view_name = File.basename(view_path)
+        doc['views'][view_name] = {}
+        mapfn = File.join(view_path, 'map.js')
+        reducefn = File.join(view_path, 'reduce.js')
+        doc['views'][view_name]['map'] =
+            File.read(mapfn) if File.exists?(mapfn)
+        doc['views'][view_name]['reduce'] =
+            File.read(reducefn) if File.exists?(reducefn)
+      end
+      # try to get the existing doc
+      doc_id = "_design/#{doc_name}"
+      db = Throne::Database.new(db_url)
+      if svr_doc = db.get(db_url)
+        # merge
+        doc = svr_doc.merge(doc)
+      end
+      doc['language'] = 'javascript'
+      db.save(doc)
+      puts "Design documents from #{source_path} loaded"
+    end
+    
+    # try and get a document with the design name
+    # if it's there, replace the lists and views keys with above data
+    # otherwise, create a new document, set language to javascript
+    # put document.
+    # WIN 
+  end
+
+  # Loads data into the database url from the source path. Picks up .yml and .json
+  # @param [String] db_url the url of the database to load the data in to
+  # @param [String] source_path the path to search for .yml and .json files
   def self.load_data_for_database(db_url, source_path)
     @db = Throne::Database.new(db_url)
     items = []
