@@ -33,9 +33,17 @@ class Throne::Database
   end
 
   # gets a document by it's ID
+  # 
+  # @param [String] docid the ID of the document to retrieve
+  # @param [String] rev (optional) the revision of the document to retrieve
+  # @return [Hash, nil] the document mapped to a hash, or nil if not found.
   def get(docid, rev=nil)
-    revurl = rev ? "?rev=#{rev}" : ""
-    JSON.parse(c.get(@url + '/' + docid + revurl))
+    begin
+      revurl = rev ? "?rev=#{rev}" : ""
+      JSON.parse(c.get(@url + '/' + docid + revurl))
+    rescue RestClient::ResourceNotFound
+      nil
+    end
   end
 
   # creates/updates a document from a hash/array structure

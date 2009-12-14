@@ -87,7 +87,7 @@ class Throne::Tasks
         # re-getting the object will create the DB
         db = get_db(args)
         # load design docs
-        # TODO
+        load_design_documents(db.url, File.join(base_path, 'design', args.db))
         # load data
         load_data_for_database(db.url, File.join(base_path, 'data', args.db))
         puts "Done."
@@ -141,7 +141,7 @@ class Throne::Tasks
         list_name = File.basename(list_path)
         doc['lists'][list_name] = {}
         listfn = File.join(list_path, 'list.js')
-        doc['lists'][list_name]['list'] = 
+        doc['lists'][list_name] = 
             File.read(listfn) if File.exists?(listfn)
       end
       Dir.glob(File.join(doc_path, 'views', '*')) do |view_path|
@@ -157,9 +157,11 @@ class Throne::Tasks
       # try to get the existing doc
       doc_id = "_design/#{doc_name}"
       db = Throne::Database.new(db_url)
-      if svr_doc = db.get(db_url)
+      if svr_doc = db.get(doc_id)
         # merge
         doc = svr_doc.merge(doc)
+      else
+        doc['_id'] = doc_id
       end
       doc['language'] = 'javascript'
       db.save(doc)
