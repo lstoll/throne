@@ -228,7 +228,7 @@ class Throne::Tasks
   def self.dump_docs_from_db(db, base_path, format)
     raise "You must specify a DB name to dump task[dbname]" unless db
     outdir = File.join(base_path, db)
-    Dir.mkdir(outdir) unless File.exists?(outdir)
+    FileUtils.mkdir_p(outdir) unless File.exists?(outdir)
     @db = Throne::Database.new(url(db))
     docs = []
 
