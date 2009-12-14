@@ -4,6 +4,12 @@ The king is here - on his couch, covered in rubies.
 
 Simple library for working with CouchDB
 
+== Caution!
+
+This code is in _heavy_ development, in conjunction with a few development projects.
+This means the API can and probably will change substantially over the next few
+releases as we work out what fits best. You have been warned.
+
 == Basic Usage
 
 Create a database object to work with. Will create the DB if it doesn't exist

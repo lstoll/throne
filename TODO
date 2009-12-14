@@ -13,3 +13,9 @@
   * There should be a different parent class for Master documents and the sub items.
     sub item's don't have save/get methods - only useful when loading from a view.
 
+* Bulk fetch, and maybe bulk update.
+  * Bulk fetch, get method checks for array param. If it's an array, POST with keys
+  * bulk put, save method checks for array param, and bundles into docs array
+
+* Attachments
+  * Just a put to url/attchment with data attached. Data in as a #read object?
