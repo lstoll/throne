@@ -91,7 +91,8 @@ class Throne::Database
   def paramify_url url, params = {}
     if params && !params.empty?
       query = params.collect do |k,v|
-        v = v.to_json if %w{key startkey endkey}.include?(k.to_s)
+        v = v.to_json if %w{key startkey endkey}.include?(k.to_s) && 
+          (v.kind_of?(Array) || v.kind_of?(Hash))
         "#{k}=#{CGI.escape(v.to_s)}"
       end.join("&")
       url = "#{url}?#{query}"
