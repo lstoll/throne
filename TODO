@@ -19,3 +19,26 @@
 
 * Attachments
   * Just a put to url/attchment with data attached. Data in as a #read object?
+
+* Design Documents
+  * Would be great to have a way to include functions into designs. Either via Couch, or embed
+
+* Niceities
+  * pretty format the JSON dump?
+
+* Model stuff 2
+  * By default, return a Mash. Good enough for most cases
+  * Have a mixin, that can be called inside something that subclasses Dash.
+  * when the method is called to set the database on the Dash, look for a design
+      document with the same name
+    * If it exists, map methods on the _class_ for .viewname that invoke the view,
+        and .listname.viewname that invoke the view from the list. these take a
+        params hash, and pass these in as URL params.
+    * when these view methods are called, iterate the result tree, and if they have a
+        couchdoc class and that class exists, instantiate it with the contents.
+    * when calling the get method on the class, do the object matching as well
+  * the tree setting for sub items is up to the object to do in its' constructor
+    * provide a convenience 'cast' method to help with this?
+
+* The get method should return an array by default, but if a :limit=1 param set, 
+    return a single object.
