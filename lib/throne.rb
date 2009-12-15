@@ -1,4 +1,4 @@
-require 'json'
+require 'yajl/json_gem'
 require 'rest_client'
 require 'hashie'
 
