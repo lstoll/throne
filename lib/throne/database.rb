@@ -16,7 +16,7 @@ class Throne::Database
   # Creates this database, will not error if the database exists
   def create_database
     begin
-      c.put @url, {}
+      C.put @url, {}
     rescue RestClient::RequestFailed => e
       unless e.message =~ /412$/
         raise e
@@ -27,7 +27,7 @@ class Throne::Database
   # deletes this database.
   def delete_database
     begin
-      c.delete @url
+      C.delete @url
     rescue RestClient::ResourceNotFound
     end
   end
@@ -40,7 +40,7 @@ class Throne::Database
   def get(docid, rev=nil)
     begin
       revurl = rev ? "?rev=#{rev}" : ""
-      Hashie::Mash.new(JSON.parse(c.get(@url + '/' + docid + revurl)))
+      Hashie::Mash.new(JP.parse(C.get(@url + '/' + docid + revurl)))
     rescue RestClient::ResourceNotFound
       nil
     end
@@ -49,11 +49,11 @@ class Throne::Database
   # creates/updates a document from a hash/array structure
   def save(doc)
     if id = doc['_id']
-      res = c.put(@url + '/' + id, doc.to_json)
+      res = C.put(@url + '/' + id, JE.encode(doc))
     else
-      res = c.post(@url, doc.to_json)
+      res = C.post(@url, JE.encode(doc))
     end
-    res = JSON.parse(res) 
+    res = JP.parse(res) 
     return nil unless res['ok']
     Throne::StringWithRevision.new(res['id'], res['rev'])
   end
@@ -67,18 +67,26 @@ class Throne::Database
       doc = doc['_id']
     end
 
-    c.delete(@url + '/' + doc + '?rev=' + rev)
+    C.delete(@url + '/' + doc + '?rev=' + rev)
   end
 
-  # runs a function by path, with optional params passed in
-  def function(path, params = {}, &block)
+  # runs a function by path, returning an array of results.
+  def function(path, params = {})
+    items = []
+    function_iter(path, params) {|i| items << i}
+    items
+  end
+
+
+  # runs a function by path, invoking once for each item. 
+  def function_iter(path, params = {}, &block)
     url = @url + '/' + path
-    res = JSON.parse(c.get(paramify_url(url, params)))
+    res = JP.parse(C.get(paramify_url(url, params)))
     res = Throne::ArrayWithFunctionMeta.new(res['rows'], res['offset'])
     if block_given?
-      # TODO - stream properly
+      # TODO - stream properly, need to get objects.
       res.each do |i|
-        yield i
+        yield Hashie::Mash.new(i)
       end
       nil
     else
@@ -91,7 +99,7 @@ class Throne::Database
   def paramify_url url, params = {}
     if params && !params.empty?
       query = params.collect do |k,v|
-        v = v.to_json if %w{key startkey endkey}.include?(k.to_s) && 
+        v = JE.encode(v) if %w{key startkey endkey}.include?(k.to_s) && 
           (v.kind_of?(Array) || v.kind_of?(Hash))
         "#{k}=#{CGI.escape(v.to_s)}"
       end.join("&")
@@ -101,7 +109,10 @@ class Throne::Database
   end
   
 
-  def c; RestClient; end
+  C = RestClient
+  # This is so I can switch stuff later.
+  JP = Yajl::Parser
+  JE = Yajl::Encoder
 end
 
 # Extended string, to store the couch revision

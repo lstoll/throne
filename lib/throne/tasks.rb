@@ -25,7 +25,7 @@ require 'yaml'
 #     |       |   `-- listname.js
 #     |       |-- shows
 #     |       |   `-- showname.js
-#     |       |-- validate_doc_update.sh
+#     |       |-- validate_doc_update.js
 #     |       `-- views
 #     |           `-- statuses
 #     |               |-- map.js
@@ -41,7 +41,7 @@ require 'yaml'
 #                  |   `-- listname.js
 #                  |-- shows
 #                  |   `-- showname.js
-#                  |-- validate_doc_update.sh 
+#                  |-- validate_doc_update.js 
 #                  `-- views
 #                      `-- statuses
 #                          |-- map.js
