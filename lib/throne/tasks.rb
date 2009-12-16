@@ -13,38 +13,38 @@ require 'yaml'
 # root of base path will be included in all databases, items with a database will be
 # included into that database only.
 #
-# base_path/
-# |-- lib
-# |    `-- library.js
-# |-- data
-# |   `-- .json and .yml folders with seed data
-# |-- design
-# |   `-- <design doc name>
-# |       |-- lists
-# |       |   `-- listname.js
-# |       |-- shows
-# |       |   `-- showname.js
-# |       |-- validate_doc_update.sh
-# |       `-- views
-# |           `-- statuses
-# |               |-- map.js
-# |               `-- reduce.js 
-# |-- <db name>
+#     base_path/
 #     |-- lib
 #     |    `-- library.js
 #     |-- data
 #     |   `-- .json and .yml folders with seed data
-#     `-- design
-#          `-- <design doc name>
-#              |-- lists
-#              |   `-- listname.js
-#              |-- shows
-#              |   `-- showname.js
-#              |-- validate_doc_update.sh 
-#              `-- views
-#                  `-- statuses
-#                      |-- map.js
-#                      `-- reduce.js 
+#     |-- design
+#     |   `-- <design doc name>
+#     |       |-- lists
+#     |       |   `-- listname.js
+#     |       |-- shows
+#     |       |   `-- showname.js
+#     |       |-- validate_doc_update.sh
+#     |       `-- views
+#     |           `-- statuses
+#     |               |-- map.js
+#     |               `-- reduce.js 
+#     |-- <db name>
+#         |-- lib
+#         |    `-- library.js
+#         |-- data
+#         |   `-- .json and .yml folders with seed data
+#         `-- design
+#              `-- <design doc name>
+#                  |-- lists
+#                  |   `-- listname.js
+#                  |-- shows
+#                  |   `-- showname.js
+#                  |-- validate_doc_update.sh 
+#                  `-- views
+#                      `-- statuses
+#                          |-- map.js
+#                          `-- reduce.js 
 #
 class Throne::Tasks
   # This will inject Rake tasks for managing the database data. The base path should
