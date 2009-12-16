@@ -133,16 +133,6 @@ class Throne::Tasks
     end
   end
 
-  # Injects all tasks. Related data files will be stores in base_path/data, and 
-  # design docs in base_path/design
-  #
-  # @param [String] base_path path for db related files.
-  def self.inject_all_tasks(base_path)
-    inject_data_tasks(File.join(base_path, 'data'))
-    inject_design_doc_tasks(File.join(base_path, 'design'))
-    inject_database_tasks(base_path)
-  end
-
   # Loads design documents into the database url, extracted from the source path
   # The docs should be layed out in the following format:
   #  `-- <design doc name>
