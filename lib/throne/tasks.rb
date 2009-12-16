@@ -2,10 +2,11 @@ require 'yaml'
 
 # Defines tasks for managing databases and views.
 #
-# To reference a file in lib/ from your design doc, use a commend like this
-# // !code library.js
+# To reference a file in lib/ from your design doc, use a comment like this
+# 
+#     // !code library.js
 #
-# This will include the contents at this locate.
+# This will include the contents at this location.
 #
 # These tasks require an environment variable of SERVER_URL to be set.
 #
