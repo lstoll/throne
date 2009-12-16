@@ -42,3 +42,14 @@
 
 * The get method should return an array by default, but if a :limit=1 param set, 
     return a single object.
+
+* Tasks
+  * Refactor. Move in to one method only, and use the following format
+    * <base>
+            * lib <- common lib functions
+            * design <- common design docs
+            * data <- common data
+            * <database name>
+                  * lib <- db specific lib functions
+                  * design <- db specific design docs
+                  * data <- db specific data

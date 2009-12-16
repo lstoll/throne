@@ -1,3 +1,5 @@
+require 'yaml'
+
 # Defines rake tasks for managing databases and views.
 #
 # Requires either a SERVER_URL or DB_URL defined as an environment variable.
@@ -135,6 +137,7 @@ class Throne::Tasks
     # inside this, there is a key called list, with the contents of the list function
     # views is the same, except with a map and reduce function
     Dir.glob(File.join(source_path, '*')).each do |doc_path|
+      next if File.basename(doc_path) == 'lib'
       doc_name = File.basename(doc_path)
       doc = {'lists' => {}, 'views' => {}}
       Dir.glob(File.join(doc_path, 'lists', '*')) do |list_path|
@@ -142,7 +145,7 @@ class Throne::Tasks
         doc['lists'][list_name] = {}
         listfn = File.join(list_path, 'list.js')
         doc['lists'][list_name] = 
-            File.read(listfn) if File.exists?(listfn)
+            inject_code_includes(source_path, listfn) if File.exists?(listfn)
       end
       Dir.glob(File.join(doc_path, 'views', '*')) do |view_path|
         view_name = File.basename(view_path)
@@ -150,9 +153,9 @@ class Throne::Tasks
         mapfn = File.join(view_path, 'map.js')
         reducefn = File.join(view_path, 'reduce.js')
         doc['views'][view_name]['map'] =
-            File.read(mapfn) if File.exists?(mapfn)
+            inject_code_includes(source_path, mapfn) if File.exists?(mapfn)
         doc['views'][view_name]['reduce'] =
-            File.read(reducefn) if File.exists?(reducefn)
+            inject_code_includes(source_path, reducefn) if File.exists?(reducefn)
       end
       # try to get the existing doc
       doc_id = "_design/#{doc_name}"
@@ -251,6 +254,21 @@ class Throne::Tasks
 
   private
 
+  def self.inject_code_includes(base_path, file)
+    res = ''
+    File.open(file).each do |line|
+      if line =~ /(\/\/|#)\ ?!code (.*)/
+        inc = File.join(base_path, $2)
+        raise "Include file #{inc} does not exist" unless File.exists?(inc)
+        res += File.read(inc)
+      else
+        res += line
+      end
+      res += "\n"
+    end
+    res
+  end
+  
   def self.dirs_in_path(path)
     res = {}
     Dir.glob(path + '/*').each do |fn|
