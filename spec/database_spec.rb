@@ -83,15 +83,13 @@ describe Throne::Database do
       id = @db.save(:testfield => 'true')
       doc = @db.get(id)
       @db.delete(doc)
-      lambda {@db.get(id)}.
-        should raise_error(RestClient::ResourceNotFound)
+      @db.get(id).should be_nil
     end
 
     it "should be able to delete a document when given a document id" do
       id = @db.save(:testfield => 'true')
       @db.delete(id)
-      lambda {@db.get(id)}.
-        should raise_error(RestClient::ResourceNotFound)
+      @db.get(id).should be_nil
     end
   end
 
