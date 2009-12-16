@@ -1,42 +1,54 @@
 require 'yaml'
 
-# Defines rake tasks for managing databases and views.
+# Defines tasks for managing databases and views.
 #
-# Requires either a SERVER_URL or DB_URL defined as an environment variable.
-# If SERVER_URL is set the database path is inferred from the directory the files
-# are stored in, if DB_URL is set that database is explicitly used, 
-# overriding the name of the folder/task. 
+# To reference a file in lib/ from your design doc, use a commend like this
+# // !code library.js
+#
+# This will include the contents at this locate.
+#
+# These tasks require an environment variable of SERVER_URL to be set.
+#
+# The documents should be stored using the following structure - all items in the 
+# root of base path will be included in all databases, items with a database will be
+# included into that database only.
+#
+# base_path/
+# |-- lib
+# |    `-- library.js
+# |-- data
+# |   `-- .json and .yml folders with seed data
+# |-- design
+# |   `-- <design doc name>
+# |       |-- lists
+# |       |   `-- listname.js
+# |       |-- shows
+# |       |   `-- showname.js
+# |       |-- validate_doc_update.sh
+# |       `-- views
+# |           `-- statuses
+# |               |-- map.js
+# |               `-- reduce.js 
+# |-- <db name>
+#     |-- lib
+#     |    `-- library.js
+#     |-- data
+#     |   `-- .json and .yml folders with seed data
+#     `-- design
+#          `-- <design doc name>
+#              |-- lists
+#              |   `-- listname.js
+#              |-- shows
+#              |   `-- showname.js
+#              |-- validate_doc_update.sh 
+#              `-- views
+#                  `-- statuses
+#                      |-- map.js
+#                      `-- reduce.js 
+#
 class Throne::Tasks
-  # This will inject Rake tasks for loading design docs into the DB
-  # The docs should be layed out in the following format:
-  #
-  # base_path/
-  # |-- lib
-  # |    `-- library.js
-  # |-- data
-  # |   `-- .json and .yml folders with seed data
-  # |-- design
-  # |   |-- lists
-  # |   |   `-- statuses
-  # |   |       `-- list.js
-  # |   `-- views
-  # |       `-- statuses
-  # |           |-- map.js
-  # |           `-- reduce.js 
-  # |-- <db name>
-  #     |-- lib
-  #     |    `-- library.js
-  #     |-- data
-  #     |   `-- .json and .yml folders with seed data
-  #     `-- design
-  #          `-- <design doc name>
-  #              |-- lists
-  #              |   `-- statuses
-  #              |       `-- list.js
-  #              `-- views
-  #                  `-- statuses
-  #                      |-- map.js
-  #                      `-- reduce.js 
+  # This will inject Rake tasks for managing the database data. The base path should
+  # be where all the items are stored.
   #
   # @param [String] base_path the path where design docs are stored
   def self.inject_tasks(base_path)
@@ -151,14 +163,25 @@ class Throne::Tasks
     # views is the same, except with a map and reduce function
     paths_for_item(base_path, database, 'design/*').each do |doc_path|
       doc_name = File.basename(doc_path)
-      doc = {'lists' => {}, 'views' => {}}
+      doc = {'lists' => {}, 'views' => {}, 'shows' => {}}
 
-      Dir.glob(File.join(doc_path, 'lists', '*')) do |list_path|
-        list_name = File.basename(list_path)
+      Dir.glob(File.join(doc_path, 'lists', '*.js')) do |list_path|
+        list_name = File.basename(list_path).split('.').first
         doc['lists'][list_name] = {}
-        listfn = File.join(list_path, 'list.js')
         doc['lists'][list_name] = 
-            inject_code_includes(base_path, database, listfn) if File.exists?(listfn)
+            inject_code_includes(base_path, database, list_path) 
+      end
+
+      Dir.glob(File.join(doc_path, 'shows', '*.js')) do |show_path|
+        show_name = File.basename(show_path).split('.').first
+        doc['shows'][show_name] = {}
+        doc['shows'][show_name] = 
+            inject_code_includes(base_path, database, show_path) 
+      end
+      
+      if File.exists?(vfn = File.join(doc_path, 'validate_doc_update.js'))
+        doc['validate_doc_update'] =
+            inject_code_includes(base_path, database, vfn)
       end
 
       Dir.glob(File.join(doc_path, 'views', '*')) do |view_path|
@@ -292,7 +315,7 @@ class Throne::Tasks
   def self.databases_in_path(path)
     res = {}
     Dir.glob(path + '/*').each do |fn|
-      next if File.basename(fn) == 'lib'
+      next if %w(lib data design).any? {|i| File.basename(fn) == i}
       res[File.basename(fn)] = fn if File.directory?(fn) 
     end
     res
