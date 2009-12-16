@@ -40,7 +40,7 @@ class Throne::Database
   def get(docid, rev=nil)
     begin
       revurl = rev ? "?rev=#{rev}" : ""
-      JSON.parse(c.get(@url + '/' + docid + revurl))
+      Hashie::Mash.new(JSON.parse(c.get(@url + '/' + docid + revurl)))
     rescue RestClient::ResourceNotFound
       nil
     end
@@ -82,7 +82,7 @@ class Throne::Database
       end
       nil
     else
-      res
+      Hashie::Mash.new(res)
     end
   end
 
