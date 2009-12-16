@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{throne}
-  s.version = "0.0.3"
+  s.version = "0.0.4"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Lincoln Stoll"]
-  s.date = %q{2009-12-16}
+  s.date = %q{2009-12-17}
   s.description = %q{Simple library for working with CouchDB. Avoids magic, keeps it simple.}
   s.email = %q{lstoll@lstoll.net}
   s.extra_rdoc_files = [
@@ -33,7 +33,8 @@ Gem::Specification.new do |s|
      "spec/document_spec.rb",
      "spec/spec.opts",
      "spec/spec_helper.rb",
-     "spec/tasks_spec.rb"
+     "spec/tasks_spec.rb",
+     "throne.gemspec"
   ]
   s.homepage = %q{http://github.com/lstoll/throne}
   s.rdoc_options = ["--charset=UTF-8"]
