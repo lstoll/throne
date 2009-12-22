@@ -116,9 +116,9 @@ class Throne::Tasks
           # re-getting the object will create the DB
           db = get_db(args)
           # load design docs
-          load_design_documents(db.url, File.join(base_path, 'design', args.db))
+          load_design_documents(db.url, base_path, args.db)
           # load data
-          load_data_for_database(db.url, File.join(base_path, 'data', args.db))
+          load_data_for_database(db.url, base_path, args.db)
           puts "Done."
         end
       end
