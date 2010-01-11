@@ -11,9 +11,9 @@ begin
     gem.homepage = "http://github.com/lstoll/throne"
     gem.authors = ["Lincoln Stoll"]
     gem.add_development_dependency "rspec", ">= 1.2.9"
-    gem.add_dependency "rest-client", ">= 0"
-    gem.add_dependency "hashie", ">= 0"
-    gem.add_dependency "yajl-ruby", ">= 0"
+    gem.add_dependency "rest-client", ">= 1.0.3"
+    gem.add_dependency "hashie", ">= 0.1.5"
+    gem.add_dependency "yajl-ruby", ">= 0.6.8"
     # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
   end
   Jeweler::GemcutterTasks.new
