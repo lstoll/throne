@@ -10,4 +10,20 @@ module Throne
   autoload :Document, 'throne/document'
   autoload :Tasks, 'throne/tasks'
   autoload :Database, 'throne/database'
+  
+  def self.server
+    @@server ||= "http://localhost:5984"
+  end
+  
+  def self.server=(address)
+    @@server = address
+  end
+  
+  def self.database
+    @@database
+  end
+  
+  def self.database=(name)
+    @@database = name
+  end
 end
