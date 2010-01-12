@@ -1,98 +1,85 @@
 require 'cgi'
 
-class Throne::Document < Hashie::Mash
-  class ImmutableProperty < StandardError; end
+class Throne::Document < Hashie::Dash
+  class NotFound < StandardError; end
   
   class << self
+    # Issue the subclass with an _id and _rev
+    def inherited(klass)
+      %w(_id _rev type disk_format_version update_seq doc_count instance_start_time purge_seq disk_size compact_running db_name doc_del_count).each do |property|
+        klass.send(:property, property)
+      end
+    end
+    
     # Create a new document and persist it to the database
-    def create(properties = {})
+    # @params [Hash] Properties to me persisted
+    def create(properties)
       new(properties).save
     end
     
     # Get a document from the database
-    # Remove a document from the database
-  end
-    
-  # Create a new document
+    # @param [String] docid the ID of the document to retrieve
+    # @param [String] rev (optional) the revision of the document to retrieve
+    # @return [Hash, nil] the document mapped to a hash, or nil if not found.
+    def get(id, rev = nil)
+      begin
+        unless rev
+          response = Throne::Request.get(:resource => id)
+        else
+          response = Throne::Request.get(:resource => id, :_rev => revision)
+        end
 
-  # Get a document from the database
-  # @param [String] docid the ID of the document to retrieve
-  # @param [String] rev (optional) the revision of the document to retrieve
-  # @return [Hash, nil] the document mapped to a hash, or nil if not found.
-  def get(docid, rev=nil)
-    begin
-      revurl = rev ? "?rev=#{rev}" : ""
-      Hashie::Mash.new(JP.parse(C.get(@url + '/' + docid + revurl)))
-    rescue RestClient::ResourceNotFound
-      nil
+        new(response)
+      rescue RestClient::ResourceNotFound
+        raise NotFound
+      end
+    end
+    
+    # Remove a document from the database
+    # @param [String] Document ID
+    # @return [boolean]
+    def delete(id)
+      get(id).delete
     end
   end
-
+    
   # Persist a document to the database
   # @param [Hash] The document properties
   # @return [self]
   def save(doc = self.to_hash)
-    if doc["_id"]
-      res = Throne::Database.put _id, doc
+    if new_record?
+      res = Throne::Request.post :resource => id
     else
-      res = Throne::Database.post nil, doc
+      res = Throne::Request.put Hash.new(:resource => id).merge(doc)
     end
-    res = JP.parse(res) 
-    return nil unless res['ok']
-    Throne::StringWithRevision.new(res['id'], res['rev'])
+    
+    self
   end
 
-  # deletes a document. Can take an object or id
-  def delete(doc)
-    if doc.kind_of? String
-      rev = get(doc)['_rev']
-    else
-      rev = doc['_rev']
-      doc = doc['_id']
-    end
-
-    C.delete(@url + '/' + doc + '?rev=' + rev)
-  end
-
-  # runs a function by path, returning an array of results.
-  def function(path, params = {})
-    items = []
-    function_iter(path, params) {|i| items << i}
-    items
-  end
-
-
-  # runs a function by path, invoking once for each item. 
-  def function_iter(path, params = {}, &block)
-    url = @url + '/' + path
-    res = JP.parse(C.get(paramify_url(url, params)))
-    res = Throne::ArrayWithFunctionMeta.new(res['rows'], res['offset'])
-    if block_given?
-      # TODO - stream properly, need to get objects.
-      res.each do |i|
-        yield Hashie::Mash.new(i)
-      end
-      nil
-    else
-      Hashie::Mash.new(res)
-    end
-  end
-
-  private
-
-  def paramify_url url, params = {}
-    if params && !params.empty?
-      query = params.collect do |k,v|
-        v = JE.encode(v) if %w{key startkey endkey}.include?(k.to_s) && 
-          (v.kind_of?(Array) || v.kind_of?(Hash))
-        "#{k}=#{CGI.escape(v.to_s)}"
-      end.join("&")
-      url = "#{url}?#{query}"
-    end
-    url
+  # Delete a document
+  # @param [String] Document ID
+  def delete
+    Throne::Request.delete(:resource => id, :_rev => revision || self.class.get(id).revision)
   end
   
-  # This is so I can switch stuff later.
-  JP = Yajl::Parser
-  JE = Yajl::Encoder
+  # Is the record persisted to the database?
+  # @returns [Boolean]
+  def new_record?
+    _id.nil?
+  end
+  
+  def reload!
+    self.class.get(id)
+  end
+  
+  
+  # id, alias to _id for convenience 
+  def id
+    _id
+  end
+  
+  # revision, alias to _rev for convenience
+  def revision
+    _rev
+  end
 end
