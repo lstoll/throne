@@ -1,9 +1,9 @@
 * Update the get method to take an existing doc, and reload it. Use ETags
 * At the top level retrieved, look for a RubyType field, and cast
-* vague AR methods (Create, save, hooks) 
 
 * Model Thoughts:
   * Everything extends Dash.
+  * vague AR methods (Create, save, hooks) 
   * When a new Document is instantiated, it's RubyClass property is set to its class
   * It's converted to JSON just by calling to_json on the parent 'document' class
   * When it's parsed in, the overridden/delegated get method checks the type of the
@@ -14,6 +14,8 @@
     sub item's don't have save/get methods - only useful when loading from a view.
 
 * Bulk fetch, and maybe bulk update.
+  * look into "include_docs"
+  * Bulk fetch for joined documents, use document with keys=[abc, def, ghi] etc
   * Bulk fetch, get method checks for array param. If it's an array, POST with keys
   * bulk put, save method checks for array param, and bundles into docs array
 
@@ -27,7 +29,6 @@
   * pretty format the JSON dump?
 
 * Model stuff 2
-  * By default, return a Mash. Good enough for most cases
   * Have a mixin, that can be called inside something that subclasses Dash.
   * when the method is called to set the database on the Dash, look for a design
       document with the same name
