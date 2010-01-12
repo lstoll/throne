@@ -3,6 +3,7 @@ require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 describe Throne::Database do
   describe "with nothing set" do
     it "should raise an error" do
+      Throne.database = nil
       lambda { Throne::Database.create }.should raise_error(Throne::Database::NameError)
     end
   end
