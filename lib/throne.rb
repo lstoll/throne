@@ -10,11 +10,6 @@ module Throne
   
   class << self
     attr_accessor :server, :database
-    
-    def base_uri
-      raise Database::NameError, "no database name set" if database.nil?
-      URI.join(server, database).to_s
-    end
   end
   
   self.server = "http://127.0.0.1:5984"
