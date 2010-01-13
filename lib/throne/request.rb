@@ -2,19 +2,19 @@ require 'cgi'
 class Throne::Request
   class << self    
     def get(request = {})
-      Yajl::Parser.parse(RestClient.get(build_uri(request.delete(:resource), request), options))
+      Yajl::Parser.parse(RestClient.get(build_uri(request.delete(:resource), request.delete(:params)), options).to_s)
     end
 
     def delete(request = {})
-      Yajl::Parser.parse(RestClient.delete(build_uri(request.delete(:resource), request), options))
+      Yajl::Parser.parse(RestClient.delete(build_uri(request.delete(:resource), request.delete(:params)), options).to_s)
     end
 
     def put(request = {})
-      Yajl::Parser.parse(RestClient.put(build_uri(request.delete(:resource), request.delete(:params)), Yajl::Encoder.encode(request), options))
+      Yajl::Parser.parse(RestClient.put(build_uri(request.delete(:resource), request.delete(:params)), Yajl::Encoder.encode(request), options).to_s)
     end
 
     def post(request = {})
-      Yajl::Parser.parse(RestClient.post(build_uri(request.delete(:resource), request.delete(:params)), Yajl::Encoder.encode(request), options))
+      Yajl::Parser.parse(RestClient.post(build_uri(request.delete(:resource), request.delete(:params)), Yajl::Encoder.encode(request), options).to_s)
     end
 
     private
