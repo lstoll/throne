@@ -40,7 +40,7 @@ describe Throne::Document do
     
     it "should get" do
       RestClient.should_receive(:get).with("http://127.0.0.1:5984/document", {:accept_encoding=>"gzip, deflate"})
-      Throne::Request.get(:resource => "document").should be_an_instance_of(Hash)
+      Throne::Request.get(:resource => "document")
     end
   end
   
@@ -51,21 +51,21 @@ describe Throne::Document do
     
     it "should delete" do
       RestClient.should_receive(:delete).with("http://127.0.0.1:5984/document", {:accept_encoding=>"gzip, deflate"})
-      Throne::Request.delete(:resource => "document").should be_an_instance_of(Hash)
+      Throne::Request.delete(:resource => "document")
     end
   end
   
   describe "put" do
     it "should put" do
       RestClient.should_receive(:put).with("http://127.0.0.1:5984/document", "{}", {:accept_encoding=>"gzip, deflate"})
-      Throne::Request.put(:resource => "document").should be_an_instance_of(Hash)
+      Throne::Request.put(:resource => "document")
     end
   end
   
   describe "post" do
     it "should post" do
       RestClient.should_receive(:post).with("http://127.0.0.1:5984/document", "{}", {:accept_encoding=>"gzip, deflate"})
-      Throne::Request.post(:resource => "document").should be_an_instance_of(Hash)
+      Throne::Request.post(:resource => "document")
     end
   end
 end
