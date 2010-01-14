@@ -1,7 +1,7 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
 class TestDocument < Throne::Document
-  property :field
+  # property :field
 end
 
 describe Throne::Document do
@@ -16,9 +16,14 @@ describe Throne::Document do
         @doc = TestDocument.create(:field => true)
       end
       
+      it "should dispatch correctly" do
+        RestClient.should_receive(:post).with("http://127.0.0.1:5984/throne-document-specs/", "{\"field\":false}", {:accept_encoding=>"gzip, deflate"})
+        TestDocument.create(:field => false)
+      end
+      
       it "should create a document" do
-        @doc.should be_an_instance_of(Throne::Document)
-        lambda { RestClient.get(URI.join(Throne.base_uri, @doc.id)) }.should_not raise_error
+        @doc.should be_an_instance_of(TestDocument)
+        lambda { RestClient.get([Throne.server, Throne.database, @doc.id].join('/')) }.should_not raise_error
       end
 
       it "should get a document" do
@@ -38,7 +43,7 @@ describe Throne::Document do
     
     describe "with instance methods" do
       before :each do
-        @doc = TestDocument.new(:field => true)
+        @doc = TestDocument.create(:field => true)
       end
       
       it "should save the document" do
@@ -65,28 +70,20 @@ describe Throne::Document do
       TestDocument.create(:field => true).new_record?.should be_false
     end
     
-    it "should have an id" do
-      @doc.id.should_not be_nil
-    end
-    
     it "should have an _id" do
-      @doc._id.should_not be_nil
-    end
-    
-    it "id and _id should be the same" do
-      @doc.id.should == @doc._id
-    end
-    
-    it "should have a revision" do
-      @doc.revision.should_not be_nil
+      @doc._id.should == @doc[:_id]
     end
     
     it "should have a _rev" do
       @doc._rev.should_not be_nil
     end
+      
+    it "should have a type" do
+      @doc.type.should == "TestDocument"
+    end
     
-    it "revision and _rev should be the same" do
-      @doc.revision.should == @doc._rev
+    it "should not have 'ok'" do
+      @doc.should_not have_key(:ok)
     end
     
     it "should be able to update an existing document" do
@@ -102,7 +99,7 @@ describe Throne::Document do
       end
       
       it "should not be the same" do
-        @doc.should != TestDocument.create(:field => true)
+        @doc.should_not == TestDocument.create(:field => true)
       end
     end
   end
