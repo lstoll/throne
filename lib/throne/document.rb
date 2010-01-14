@@ -21,7 +21,7 @@ class Throne::Document < Hash
           response = Throne::Request.get(:resource => id, :params => {:rev => _rev})
         end
         
-        new(response)
+        new.merge(response)
       rescue RestClient::ResourceNotFound
         raise NotFound
       end
@@ -67,12 +67,20 @@ class Throne::Document < Hash
   # Is the record persisted to the database?
   # @returns [Boolean]
   def new_record?
-    _id.nil?
+    self[:_id].nil?
   end
   
   # Reload data from couchdb
   # @returns [self]
   def reload!
     self.class.get(_id)
-  end  
+  end
+  
+  def method_missing(method, *args, &block)
+    if has_key? method
+      self[method]
+    else
+      super
+    end
+  end
 end
