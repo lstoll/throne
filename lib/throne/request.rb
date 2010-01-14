@@ -24,7 +24,7 @@ class Throne::Request
 
     def build_uri(resource, params)
       raise Throne::Database::NameError, "no database name set" if Throne.database.nil?
-      URI.join(Throne.server, Throne.database, (resource||''), paramify(params)).to_s
+      [Throne.server, Throne.database, (resource||'')].join('/') + paramify(params) 
     end
 
     def paramify(params = {})
