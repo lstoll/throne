@@ -1,16 +1,8 @@
-require 'cgi'
-
-class Throne::Document < Hashie::Dash
+class Throne::Document < Hashie::Mash
   class NotFound < StandardError; end
   
-  class << self
-    # Issue the subclass with an _id and _rev
-    def inherited(klass)
-      %w(_id _rev type disk_format_version update_seq doc_count instance_start_time purge_seq disk_size compact_running db_name doc_del_count).each do |property|
-        klass.send(:property, property)
-      end
-    end
-    
+  ## Class methods
+  class << self   
     # Create a new document and persist it to the database
     # @params [Hash] Properties to me persisted
     def create(properties)
@@ -26,9 +18,9 @@ class Throne::Document < Hashie::Dash
         unless rev
           response = Throne::Request.get(:resource => id)
         else
-          response = Throne::Request.get(:resource => id, :params => {:rev => revision})
+          response = Throne::Request.get(:resource => id, :params => {:rev => _rev})
         end
-
+        
         new(response)
       rescue RestClient::ResourceNotFound
         raise NotFound
@@ -42,7 +34,9 @@ class Throne::Document < Hashie::Dash
       get(id).delete
     end
   end
-    
+  
+  ## Instance methods
+  
   # Persist a document to the database
   # @param [Hash] The document properties
   # @return [Hash]
@@ -74,18 +68,9 @@ class Throne::Document < Hashie::Dash
     _id.nil?
   end
   
+  # Reload data from couchdb
+  # @returns [self]
   def reload!
-    self.class.get(id)
-  end
-  
-  
-  # id, alias to _id for convenience 
-  def id
-    _id
-  end
-  
-  # revision, alias to _rev for convenience
-  def revision
-    _rev
-  end
+    self.class.get(_id)
+  end  
 end
