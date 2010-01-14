@@ -37,6 +37,9 @@ class Throne::Document < Hash
   
   ## Instance methods
   
+  def _id; self[:_id]; end
+  def _rev; self[:_rev]; end
+  
   # Persist a document to the database
   # @param [Hash] The document properties
   # @return [Hash]
@@ -44,20 +47,19 @@ class Throne::Document < Hash
     self.merge!(attributes)
     
     if new_record?
-      Throne::Request.post self
+      response = Throne::Request.post self.to_hash
     else
-      data = {:resource => _id}.merge(self)
-      
-      Throne::Request.put data
+      data = {:resource => _id}.merge(self.to_hash)  
+      response = Throne::Request.put data
     end
-
-    self
+    
+    self.merge!(response)
   end
 
   # Delete a document
   # @param [String] Document ID
   def delete
-    Throne::Request.delete(:resource => _id, :params => {:rev => (_rev || self.class.get(id)._rev)})
+    Throne::Request.delete(:resource => _id, :params => {:rev => (_rev || self.class.get(_id)._rev)})
   end
   
   def <=>(other)
@@ -67,7 +69,7 @@ class Throne::Document < Hash
   # Is the record persisted to the database?
   # @returns [Boolean]
   def new_record?
-    self[:_id].nil?
+    !key? :_id
   end
   
   # Reload data from couchdb
@@ -77,10 +79,20 @@ class Throne::Document < Hash
   end
   
   def method_missing(method, *args, &block)
-    if has_key? method
-      self[method]
+    return self[method] if key? method
+    
+    match = method.to_s.match(/(.*?)([?=!]?)$/)
+    case match[2]
+    when "="
+      self[match[1]] = args.first
+    when "?"
+      key?(match[1])
     else
       super
     end
+  end
+  
+  def to_hash
+    Hash.new(default).merge(self)
   end
 end

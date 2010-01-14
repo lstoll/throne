@@ -23,21 +23,21 @@ describe Throne::Document do
       
       it "should create a document" do
         @doc.should be_an_instance_of(TestDocument)
-        lambda { RestClient.get([Throne.server, Throne.database, @doc.id].join('/')) }.should_not raise_error
+        lambda { RestClient.get([Throne.server, Throne.database, @doc._id].join('/')) }.should_not raise_error
       end
 
       it "should get a document" do
-        TestDocument.get(@doc.id).should == @doc
+        TestDocument.get(@doc._id).should == @doc
       end
       
       it "should get a revision of a document" do
-        TestDocument.get(@doc.id).should == @doc
+        TestDocument.get(@doc._id).should == @doc
       end
 
       it "should delete a document" do
         doc = TestDocument.create(:field => true)
-        TestDocument.delete(doc.id).should be_true
-        lambda { TestDocument.get(doc.id) }.should raise_error(Throne::Document::NotFound)
+        TestDocument.delete(doc._id).should be_true
+        lambda { TestDocument.get(doc._id) }.should raise_error(Throne::Document::NotFound)
       end      
     end
     
@@ -52,7 +52,7 @@ describe Throne::Document do
 
       it "should delete the document" do
         @doc.delete.should be_true
-        lambda { TestDocument.get(@doc.id) }.should raise_error(Throne::Document::NotFound)
+        lambda { TestDocument.get(@doc._id) }.should raise_error(Throne::Document::NotFound)
       end
     end
   end
@@ -78,7 +78,7 @@ describe Throne::Document do
       @doc._rev.should_not be_nil
     end
       
-    it "should have a type" do
+    it "should have a ruby type" do
       @doc.type.should == "TestDocument"
     end
     
