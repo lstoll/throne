@@ -59,7 +59,11 @@ class Throne::Document < Hashie::Dash
   # Delete a document
   # @param [String] Document ID
   def delete
-    Throne::Request.delete(:resource => id, :params => {:rev => (revision || self.class.get(id).revision)})
+    Throne::Request.delete(:resource => _id, :params => {:rev => (_rev || self.class.get(id)._rev)})
+  end
+  
+  def <=>(other)
+    [self._id, self._rev] <=> [other._id, other._rev]
   end
   
   # Is the record persisted to the database?
