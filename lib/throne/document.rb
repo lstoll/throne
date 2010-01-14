@@ -44,7 +44,9 @@ class Throne::Document < Hash
     if new_record?
       response = Throne::Request.post self.to_hash.merge(doc)
     else
-      response = Throne::Request.put Hash.new(:resource => _id).merge(doc)
+      data = {:resource => _id}.merge(self)
+      
+      Throne::Request.put data
     end
 
     self.merge!(response)
