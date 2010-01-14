@@ -45,13 +45,15 @@ class Throne::Document < Hashie::Dash
     
   # Persist a document to the database
   # @param [Hash] The document properties
-  # @return [self]
-  def save(doc = self.to_hash)
+  # @return [Hash]
+  def save(doc = {})  
     if new_record?
-      res = Throne::Request.post :resource => id
+      response = Throne::Request.post self.to_hash.merge(doc)
     else
-      res = Throne::Request.put Hash.new(:resource => id).merge(doc)
+      response = Throne::Request.put Hash.new(:resource => _id).merge(doc)
     end
+
+    self.merge!(response)
     
     self
   end
