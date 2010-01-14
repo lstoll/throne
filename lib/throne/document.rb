@@ -13,9 +13,9 @@ class Throne::Document < Hash
     # @param [String] docid the ID of the document to retrieve
     # @param [String] rev (optional) the revision of the document to retrieve
     # @return [Hash, nil] the document mapped to a hash, or nil if not found.
-    def get(id, rev = nil)
+    def get(id, revision = nil)
       begin
-        unless rev
+        unless revision
           response = Throne::Request.get(:resource => id)
         else
           response = Throne::Request.get(:resource => id, :params => {:rev => _rev})
