@@ -4,9 +4,9 @@ class Throne::Document < Hash
   ## Class methods
   class << self   
     # Create a new document and persist it to the database
-    # @params [Hash] Properties to me persisted
-    def create(properties)
-      new(properties).save
+    # @params [Hash] Properties to be persisted
+    def create(attributes = {})
+      new.save(attributes)
     end
     
     # Get a document from the database
