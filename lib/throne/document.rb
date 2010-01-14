@@ -40,17 +40,17 @@ class Throne::Document < Hash
   # Persist a document to the database
   # @param [Hash] The document properties
   # @return [Hash]
-  def save(doc = {})  
+  def save(attributes)
+    self.merge!(attributes)
+    
     if new_record?
-      response = Throne::Request.post self.to_hash.merge(doc)
+      Throne::Request.post self
     else
       data = {:resource => _id}.merge(self)
       
       Throne::Request.put data
     end
 
-    self.merge!(response)
-    
     self
   end
 
