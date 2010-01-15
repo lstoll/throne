@@ -14,7 +14,7 @@ describe Throne::Database do
       Throne.database = @db_name
       
       begin
-        Throne::Database.delete
+        Throne::Database.destroy
       rescue RestClient::ResourceNotFound
       end
     end
@@ -26,8 +26,8 @@ describe Throne::Database do
     
     it "should destroy the database" do
       Throne::Database.create
-      Throne::Database.delete
-      lambda { Throne::Database.delete }.should raise_error(RestClient::ResourceNotFound)
+      Throne::Database.destroy
+      lambda { Throne::Database.destroy }.should raise_error(RestClient::ResourceNotFound)
     end
     
     it "should not error when creating a database that exists" do
