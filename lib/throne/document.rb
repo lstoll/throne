@@ -5,6 +5,7 @@ class Throne::Document < Hashie::Mash
   class << self   
     # Create a new document and persist it to the database
     # @params [Hash] Properties to be persisted
+    # @return [self]
     def create(attributes = {})
       new.save(attributes)
     end
@@ -12,7 +13,7 @@ class Throne::Document < Hashie::Mash
     # Get a document from the database
     # @param [String] docid the ID of the document to retrieve
     # @param [String] rev (optional) the revision of the document to retrieve
-    # @return [Hash, nil] the document mapped to a hash, or nil if not found.
+    # @return [Hash] the document mapped to a hash, or nil if not found.
     def get(id, revision = nil)
       begin
         unless revision
@@ -29,7 +30,7 @@ class Throne::Document < Hashie::Mash
     
     # Remove a document from the database
     # @param [String] Document ID
-    # @return [boolean]
+    # @return [TrueClass]
     def destroy(id)
       get(id).destroy
     rescue Throne::Document::NotFound
@@ -63,7 +64,7 @@ class Throne::Document < Hashie::Mash
 
   # Remove self from the database
   # @param [String] Document ID
-  # @return [Boolean]
+  # @return [TrueClass]
   def destroy
     true if Throne::Request.delete(:resource => _id, :params => {:rev => _rev}).key? "ok"
   rescue RestClient::ResourceNotFound
@@ -71,7 +72,7 @@ class Throne::Document < Hashie::Mash
   end
   
   # Is the record persisted to the database?
-  # @returns [Boolean]
+  # @returns [TrueClass]
   def new_record?
     !key? :_id
   end
