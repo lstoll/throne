@@ -50,17 +50,15 @@ class Throne::Document < Hashie::Mash
   # Persist a document to the database
   # @param [Hash] The document properties
   # @return [Hash]
-  def save(attributes)
-    self.merge!(attributes)
-    
+  def save(attributes = {})
     if new_record?
-      response = Throne::Request.post self.to_hash
+      response = Throne::Request.post normalise(attributes).to_hash
     else
-      data = {:resource => _id}.merge(self.to_hash)  
+      data = {:resource => _id}.merge normalise(attributes).to_hash
       response = Throne::Request.put data
     end
     
-    self.merge!(response)
+    normalise(response)
   end
 
   # Remove self from the database
@@ -84,27 +82,18 @@ class Throne::Document < Hashie::Mash
     !key? :_id
   end
   
-  # Reload data from couchdb
-  # @returns [self]
-  def reload!
-    self.class.get(_id)
-  end
-  
-  def method_missing(method, *args, &block)
-    return self[method] if key? method
+  private
+  def normalise(hash)
+    # Merge the hash with self
+    merge!(hash)
     
-    match = method.to_s.match(/(.*?)([?=!]?)$/)
-    case match[2]
-    when "="
-      self[match[1]] = args.first
-    when "?"
-      key?(match[1])
-    else
-      super
+    # Rename id and rev to _id and _rev
+    %w(id rev).each do |attribute|
+      self[:"_#{attribute}"] = delete attribute if key? attribute
     end
-  end
-  
-  def to_hash
-    Hash.new(default).merge(self)
+    
+    # Remove ok
+    delete("ok")
+    self
   end
 end
