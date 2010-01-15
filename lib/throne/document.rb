@@ -1,4 +1,4 @@
-class Throne::Document < Hash
+class Throne::Document < Hashie::Mash
   class NotFound < StandardError; end
   
   ## Class methods
