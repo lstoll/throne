@@ -23,7 +23,7 @@ class Throne::Document < Hashie::Mash
         
         new.merge(response)
       rescue RestClient::ResourceNotFound
-        raise NotFound
+        raise NotFound, "#{id} was not found in #{Throne.database}"
       end
     end
     
