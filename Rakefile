@@ -9,7 +9,7 @@ begin
     gem.description = %Q{Simple library for working with CouchDB. Avoids magic, keeps it simple.}
     gem.email = "lstoll@lstoll.net"
     gem.homepage = "http://github.com/lstoll/throne"
-    gem.authors = ["Lincoln Stoll"]
+    gem.authors = ["Lincoln Stoll", "Ben Schwarz"]
     gem.add_development_dependency "rspec", ">= 1.2.9"
     gem.add_dependency "rest-client", ">= 1.0.3"
     gem.add_dependency "hashie", ">= 0.1.5"
