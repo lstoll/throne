@@ -60,7 +60,7 @@ releases as we work out what fits best. You have been warned.
 ## Links
 
 * [Documentation](http://rdoc.info/projects/benschwarz/throne)
-* [CI](http://runcoderun.com/benschwarz/throne)
+
 
 ## Note on Patches/Pull Requests
  
