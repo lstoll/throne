@@ -17,7 +17,7 @@ describe Throne::Document do
       end
       
       it "should dispatch correctly" do
-        RestClient.should_receive(:post).with("http://127.0.0.1:5984/throne-document-specs/", "{\"field\":false}", {:accept_encoding=>"gzip, deflate"})
+        RestClient.should_receive(:post).with("http://127.0.0.1:5984/throne-document-specs/", "{\"field\":false,\"ruby_class\":\"TestDocument\"}", {:accept_encoding=>"gzip, deflate"})
         TestDocument.create(:field => false)
       end
       
@@ -34,11 +34,12 @@ describe Throne::Document do
         TestDocument.get(@doc._id).should == @doc
       end
 
-      it "should delete a document" do
+      it "should destroy a document" do
         doc = TestDocument.create(:field => true)
-        TestDocument.delete(doc._id).should be_true
+        TestDocument.destroy(doc._id).should be_true
         lambda { TestDocument.get(doc._id) }.should raise_error(Throne::Document::NotFound)
-      end      
+        TestDocument.destroy(doc._id).should be_true # subseqent gets.
+      end
     end
     
     describe "with instance methods" do
@@ -50,8 +51,8 @@ describe Throne::Document do
         @doc.save.should be_an_instance_of(TestDocument)
       end
 
-      it "should delete the document" do
-        @doc.delete.should be_true
+      it "should destroy the document" do
+        @doc.destroy.should be_true
         lambda { TestDocument.get(@doc._id) }.should raise_error(Throne::Document::NotFound)
       end
     end
@@ -78,8 +79,8 @@ describe Throne::Document do
       @doc._rev.should_not be_nil
     end
       
-    it "should have a ruby type" do
-      @doc.type.should == "TestDocument"
+    it "should have a ruby class" do
+      @doc.ruby_class.should == "TestDocument"
     end
     
     it "should not have 'ok'" do
@@ -89,8 +90,17 @@ describe Throne::Document do
     it "should be able to update an existing document" do
       @doc.field = false
       @doc.save
-      @doc.reload!
       @doc.field.should be_false
+    end
+    
+    it "should not have id and rev after save" do
+      @doc.save
+      @doc.id.should_not == @doc._id # object_id
+      @doc.rev.should be_nil
+    end
+    
+    it "should not create a new object with subsequent saves" do
+      @doc.save.should == @doc
     end
     
     describe "comparison" do
@@ -107,16 +117,5 @@ describe Throne::Document do
   describe "permalinking" do
     it "id and permalink should be the same"
     it "should save to the permalink url"
-  end
- 
-  describe "Design Access" do
-    it "should be able to call a design with parameters"
-  end
-    
-    
-  it "should save when created called"
-  it "should tag its class when saved"
-  describe "View Access" do
-    it "should be able to query a view"
   end
 end
