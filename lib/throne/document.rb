@@ -18,7 +18,7 @@ class Throne::Document < Hashie::Mash
         unless revision
           response = Throne::Request.get(:resource => id)
         else
-          response = Throne::Request.get(:resource => id, :params => {:rev => _rev})
+          response = Throne::Request.get(:resource => id, :params => {:rev => revision})
         end
         
         new.merge(response)
