@@ -15,12 +15,7 @@ describe Throne::Document do
       before :all do
         @doc = TestDocument.create(:field => true)
       end
-      
-      it "should dispatch correctly" do
-        RestClient.should_receive(:post).with("http://127.0.0.1:5984/throne-document-specs/", "{\"field\":false,\"ruby_class\":\"TestDocument\"}", {:accept_encoding=>"gzip, deflate"})
-        TestDocument.create(:field => false)
-      end
-      
+            
       it "should create a document" do
         @doc.should be_an_instance_of(TestDocument)
         lambda { RestClient.get([Throne.server, Throne.database, @doc._id].join('/')) }.should_not raise_error
@@ -30,16 +25,19 @@ describe Throne::Document do
         TestDocument.get(@doc._id).should == @doc
       end
       
-      it "should get a revision of a document" do
-        TestDocument.get(@doc._id).should == @doc
+      it "should get a specific revision" do
+        rev = @doc._rev
+        @doc.save # Create a new revision
+        TestDocument.get(@doc._id, rev).should_not == @doc
       end
 
       it "should destroy a document" do
         doc = TestDocument.create(:field => true)
         TestDocument.destroy(doc._id).should be_true
         lambda { TestDocument.get(doc._id) }.should raise_error(Throne::Document::NotFound)
-        TestDocument.destroy(doc._id).should be_true # subseqent gets.
+        TestDocument.destroy(doc._id).should be_true # subseqent destroys should not raise.
       end
+      
     end
     
     describe "with instance methods" do
@@ -54,6 +52,7 @@ describe Throne::Document do
       it "should destroy the document" do
         @doc.destroy.should be_true
         lambda { TestDocument.get(@doc._id) }.should raise_error(Throne::Document::NotFound)
+        @doc.destroy.should be_true # subseqent destroys should not raise.
       end
     end
   end
