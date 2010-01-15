@@ -65,15 +65,9 @@ class Throne::Document < Hashie::Mash
   # @param [String] Document ID
   # @return [Boolean]
   def destroy
-    if Throne::Request.delete(:resource => _id, :params => {:rev => _rev}).key? "ok"
-      true
-    else
-      false
-    end
-  end
-  
-  def <=>(other)
-    [self._id, self._rev] <=> [other._id, other._rev]
+    true if Throne::Request.delete(:resource => _id, :params => {:rev => _rev}).key? "ok"
+  rescue RestClient::ResourceNotFound
+    true
   end
   
   # Is the record persisted to the database?
