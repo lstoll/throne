@@ -10,9 +10,6 @@ This code is in _heavy_ development, in conjunction with a few development proje
 This means the API can and probably will change substantially over the next few
 releases as we work out what fits best. You have been warned.
 
-## API documentation
-
-can be found at http://rdoc.info/projects/benschwarz/throne
 
 ## Basic Usage
 
@@ -59,6 +56,11 @@ can be found at http://rdoc.info/projects/benschwarz/throne
 ### Destroy the database
 
     Throne::Database.destroy
+
+## Links
+
+* [Documentation](http://rdoc.info/projects/benschwarz/throne)
+* [CI](http://runcoderun.com/benschwarz/throne)
 
 ## Note on Patches/Pull Requests
  
