@@ -30,8 +30,10 @@ class Throne::Document < Hashie::Mash
     # Remove a document from the database
     # @param [String] Document ID
     # @return [boolean]
-    def delete(id)
-      get(id).delete
+    def destroy(id)
+      get(id).destroy
+    rescue Throne::Document::NotFound
+      true
     end
   end
   
@@ -56,10 +58,15 @@ class Throne::Document < Hashie::Mash
     self.merge!(response)
   end
 
-  # Delete a document
+  # Remove self from the database
   # @param [String] Document ID
-  def delete
-    Throne::Request.delete(:resource => _id, :params => {:rev => (_rev || self.class.get(_id)._rev)})
+  # @return [Boolean]
+  def destroy
+    if Throne::Request.delete(:resource => _id, :params => {:rev => _rev}).key? "ok"
+      true
+    else
+      false
+    end
   end
   
   def <=>(other)
