@@ -1,4 +1,3 @@
-require 'yajl'
 require 'rest_client'
 require 'hashie'
 
@@ -7,6 +6,7 @@ module Throne
   autoload :Request,  'throne/request'
   autoload :Document, 'throne/document'
   autoload :Database, 'throne/database'
+  autoload :DesignDocument, 'throne/design_document'
   
   class << self
     attr_accessor :server, :database
