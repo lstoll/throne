@@ -12,16 +12,11 @@ class Throne::Document < Hashie::Mash
     
     # Get a document from the database
     # @param [String] docid the ID of the document to retrieve
-    # @param [String] rev (optional) the revision of the document to retrieve
+    # @param [Hash] (optional) the params to be sent through with the request
     # @return [Hash] the document mapped to a hash, or nil if not found.
-    def get(id, revision = nil)
+    def get(id, params = {})
       begin
-        unless revision
-          response = Throne::Request.get(:resource => id)
-        else
-          response = Throne::Request.get(:resource => id, :params => {:rev => revision})
-        end
-        
+        response = Throne::Request.get(:resource => id, :params => params)
         new.merge(response)
       rescue RestClient::ResourceNotFound
         raise NotFound, "#{id} was not found in #{Throne.database}"

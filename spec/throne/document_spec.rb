@@ -1,12 +1,12 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
 class TestDocument < Throne::Document
-  # property :field
 end
 
 describe Throne::Document do
   before :all do
     Throne.database = "throne-document-specs"
+    Throne::Database.destroy
     Throne::Database.create
   end
 
@@ -25,10 +25,15 @@ describe Throne::Document do
         TestDocument.get(@doc._id).should == @doc
       end
       
+      it "should get a document with params" do
+        RestClient.should_receive(:get).with(/descending=true/, anything())
+        TestDocument.get(@doc._id, {:descending => true}).should be_an_instance_of(TestDocument)
+      end
+      
       it "should get a specific revision" do
         rev = @doc._rev
         @doc.save # Create a new revision
-        TestDocument.get(@doc._id, rev).should_not == @doc
+        TestDocument.get(@doc._id, {:rev => rev}).should_not == @doc
       end
 
       it "should destroy a document" do
@@ -111,10 +116,5 @@ describe Throne::Document do
         @doc.should_not == TestDocument.create(:field => true)
       end
     end
-  end
-  
-  describe "permalinking" do
-    it "id and permalink should be the same"
-    it "should save to the permalink url"
   end
 end
