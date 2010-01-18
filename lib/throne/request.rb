@@ -1,20 +1,39 @@
 require 'cgi'
+
+begin
+  require 'yajl'
+
+  class Yajl::Encoder
+    class << self
+      alias_method :generate, :encode
+    end
+  end
+  
+  JsonParser = Yajl::Parser
+  JsonEncoder = Yajl::Encoder  
+rescue LoadError
+  require 'json/pure'
+  
+  JsonParser = JSON
+  JsonEncoder = JSON
+end
+
 class Throne::Request
   class << self    
     def get(request = {})
-      Yajl::Parser.parse(RestClient.get(build_uri(request.delete(:resource), request.delete(:params)), options).to_s)
+      JsonParser.parse(RestClient.get(build_uri(request.delete(:resource), request.delete(:params)), options).to_s)
     end
 
     def delete(request = {})
-      Yajl::Parser.parse(RestClient.delete(build_uri(request.delete(:resource), request.delete(:params)), options).to_s)
+      JsonParser.parse(RestClient.delete(build_uri(request.delete(:resource), request.delete(:params)), options).to_s)
     end
 
     def put(request = {})
-      Yajl::Parser.parse(RestClient.put(build_uri(request.delete(:resource), request.delete(:params)), Yajl::Encoder.encode(request), options).to_s)
+      JsonParser.parse(RestClient.put(build_uri(request.delete(:resource), request.delete(:params)), JsonEncoder.generate(request), options).to_s)
     end
 
     def post(request = {})
-      Yajl::Parser.parse(RestClient.post(build_uri(request.delete(:resource), request.delete(:params)), Yajl::Encoder.encode(request), options).to_s)
+      JsonParser.parse(RestClient.post(build_uri(request.delete(:resource), request.delete(:params)), JsonEncoder.generate(request), options).to_s)
     end
 
     private
@@ -30,7 +49,7 @@ class Throne::Request
     def paramify(params = {})
       if params && !params.empty?
         query = params.map do |k,v|
-          v = Yajl::Encoder.encode(v) if %w{key startkey endkey}.include?(k.to_s) && (v.kind_of?(Array) || v.kind_of?(Hash))
+          v = JsonEncoder.generate(v) if %w{key startkey endkey}.include?(k.to_s) && (v.kind_of?(Array) || v.kind_of?(Hash))
 
           "#{k}=#{CGI.escape(v.to_s)}"
         end

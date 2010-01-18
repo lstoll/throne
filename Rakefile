@@ -13,7 +13,7 @@ begin
     gem.add_development_dependency "rspec", ">= 1.2.9"
     gem.add_dependency "rest-client", ">= 1.0.3"
     gem.add_dependency "hashie", ">= 0.1.5"
-    gem.add_dependency "yajl-ruby", ">= 0.6.7"
+    gem.add_dependency "json_pure", ">= 1.2.0"
     # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
   end
   Jeweler::GemcutterTasks.new

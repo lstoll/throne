@@ -57,6 +57,13 @@ releases as we work out what fits best. You have been warned.
 
     Throne::Database.destroy
 
+## Json Parser
+
+Throne uses `json_pure` as the default json parser, this allows for execution in environments like jruby, macruby and even windows. 
+To use a C-based json parser (for production environments where proformance is important), install `yajl-ruby` with `gem install yajl-ruby`.
+
+Throne will use Yajl when available and fall back to the `json_pure` implementation
+
 ## Links
 
 * [Documentation](http://rdoc.info/projects/benschwarz/throne)
