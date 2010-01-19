@@ -46,7 +46,8 @@ describe Throne::DesignDocument do
       end
       
       it "should get the design document" do
-        Throne::DesignDocument.get(@name).should be_an_instance_of(Throne::DesignDocument)
+        Throne::DesignDocument.create(@name + "create")
+        Throne::DesignDocument.get(@name + "create").should be_an_instance_of(Throne::DesignDocument)
       end
     end
     
@@ -118,8 +119,8 @@ describe Throne::DesignDocument do
       end
       
       it "should destroy and return true" do
-        @design_doc.destroy(@name).should be_true
-        lambda { @design_doc.get(@name) }.should raise_error(Throne::Document::NotFound)
+        @design_doc.destroy.should be_true
+        lambda { Throne::DesignDocument.get(@name) }.should raise_error(Throne::Document::NotFound)
       end
     end
   end
