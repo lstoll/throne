@@ -1,6 +1,6 @@
 require 'rest_client'
 require 'hashie'
-
+require 'yajl'
 module Throne
   autoload :Tasks,    'throne/tasks'
   autoload :Request,  'throne/request'
