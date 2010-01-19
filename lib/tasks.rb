@@ -226,7 +226,7 @@ class Throne::Tasks
             @db.save(doc)
           rescue RestClient::RequestFailed => e
             if e.message =~ /409$/
-              puts "Duplicate document - this data has probaby already been loaded"
+              puts "Duplicate document - this data has probably already been loaded"
               doccount -= 1
             else
               raise e
@@ -239,7 +239,7 @@ class Throne::Tasks
           @db.save(item)
         rescue RestClient::RequestFailed => e
           if e.message =~ /409$/
-            puts "Duplicate document - this data has probaby already been loaded"
+            puts "Duplicate document - this data has probably already been loaded"
             doccount -= 1
           else
             raise e
