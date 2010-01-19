@@ -45,3 +45,6 @@
     return a single object.
 
 * Check that the mash constructor uses the passed in object, rather than copying.
+
+* Handle include_docs?=true better - maybe check params, if this this set make sure 
+  the document object is loaded from ['doc'], and that ['value'] goes somewhere else
