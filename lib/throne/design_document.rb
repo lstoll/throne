@@ -6,8 +6,13 @@ class Throne::DesignDocument
       new(name).save(attributes)
     end
     
+    # Get a design document
+    # @params [String] The name of the design document
+    # @return [Throne::DesignDocument] The design document
     def get(name)
-      new(name)
+      design = new(name)
+      design.document = Throne::Document.get("_design/#{name}")
+      design
     end
     
     # Execute a design document
@@ -27,8 +32,11 @@ class Throne::DesignDocument
       Throne::Document.get("_design/#{document_path}", (options[:params] || {}))
     end
     
+    # Destroy the design document
+    # @params [String] The name of the design document
+    # @return [Boolean]
     def destroy(name)
-      Throne::Document.destroy(name)
+      Throne::Document.destroy("_design/#{name}")
     end
     
     private
@@ -44,18 +52,25 @@ class Throne::DesignDocument
   
   attr_accessor :document
   
+  # Create a new design document
+  # @params [String] The major name of the design document
   def initialize(name)
     @name = name
-    @document = Throne::Document.get("_design/#{name}")
-  rescue Throne::Document::NotFound
     @document = Throne::Document.new
+    @document._id = "_design/#{name}"
+    @document
   end
   
+  # Save the current design document
+  # @params [Hash] Additional attributes to be saved
   def save(attributes = {})
     document.save(attributes)
     self
   end
   
+  # Destroy the current design document
+  # @params [Boolean]
   def destroy
+    document.destroy
   end
 end
